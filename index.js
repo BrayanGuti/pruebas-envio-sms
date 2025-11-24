@@ -3,10 +3,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 import {
   getAuth,
   RecaptchaVerifier,
-  signInWithPhoneNumber, // Necesitas importar esta función
+  signInWithPhoneNumber,
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-// Your web app's Firebase configuration
+// Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCalgDNSW7moAPUafOzGf92O9vhPCp1mCE",
   authDomain: "m1-firebase-fe987.firebaseapp.com",
@@ -17,73 +17,108 @@ const firebaseConfig = {
   measurementId: "G-NRTF7JRL16",
 };
 
-// Initialize Firebase
+// Inicialización de Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Variables globales para el flujo
+let confirmationResult = null; // Guardará el resultado de signInWithPhoneNumber
 
 console.log("Firebase initialized.");
 
 // 1. Configuración del Idioma
-// Opción elegida: usar el idioma del dispositivo (la mejor práctica)
 auth.useDeviceLanguage();
 
-// 2. Definición del reCAPTCHA Invisible
-// El ID 'sign-in-button' del HTML será el elemento que dispare el reCAPTCHA.
+// 2. Definición del reCAPTCHA Invisible (vinculado al botón 'sign-in-button')
 window.recaptchaVerifier = new RecaptchaVerifier(auth, "sign-in-button", {
   size: "invisible",
   callback: (response) => {
-    // Cuando el reCAPTCHA se resuelve automáticamente,
-    // la función onSignInSubmit() se llama.
+    // reCAPTCHA resuelto automáticamente
     onSignInSubmit();
   },
-  // Opcional: Manejar si el tiempo de respuesta expira
   "expired-callback": () => {
-    console.warn("reCAPTCHA expiró. Inténtalo de nuevo.");
-    // Aquí podrías resetear el reCAPTCHA si fuera necesario.
+    console.warn("reCAPTCHA expiró.");
   },
 });
 
 // 3. Función de Inicio de Sesión (Se llama tras resolver el reCAPTCHA)
 function onSignInSubmit() {
-  // ESTE ES EL PASO CLAVE DONDE INICIAS LA AUTENTICACIÓN
-
-  // NOTA: Debes pedirle al usuario el número de teléfono antes de llamar a esta función.
-  // Usaremos un número de prueba por ahora.
-  const phoneNumber = "+573014856811	"; // **REEMPLAZA** con un número de prueba autorizado
+  // Obtenemos el número del input HTML
+  const phoneNumberInput = document.getElementById("phone-number-input");
+  const phoneNumber = phoneNumberInput.value.trim();
   const appVerifier = window.recaptchaVerifier;
 
-  // Aquí iría el código para enviar el SMS:
-  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-    .then((confirmationResult) => {
-      // Guarda el objeto 'confirmationResult' globalmente para verificar el código después.
-      window.confirmationResult = confirmationResult;
-      console.log(
-        "SMS enviado. Ahora pide el código de verificación al usuario."
-      );
+  // Validación básica del número de prueba
+  if (phoneNumber !== "+573014856811") {
+    alert("Por favor usa el número de prueba: +573014856811");
+    return;
+  }
 
-      // Ocultar botón de envío y mostrar input para código
-      // (Esta parte es lógica del DOM, la omito por simplicidad)
+  // Código para enviar el SMS:
+  signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+    .then((result) => {
+      // Guarda el resultado globalmente para usarlo en la función 'confirm'.
+      confirmationResult = result;
+      console.log("SMS enviado. Ahora pide el código de verificación.");
+
+      // **Lógica del DOM para cambiar la UI**
+      document.getElementById("phone-form").style.display = "none";
+      document.getElementById("verification-form").style.display = "block";
     })
     .catch((error) => {
-      console.error("Error al enviar SMS y/o resolver reCAPTCHA:", error);
-      // Si hay un error, el reCAPTCHA se debe resetear para que el usuario pueda intentarlo de nuevo.
+      console.error("Error al enviar SMS:", error);
+      alert("Error al enviar código: " + error.message);
       recaptchaVerifier.render().then((widgetId) => grecaptcha.reset(widgetId));
     });
 }
 
-// 4. Renderizar el reCAPTCHA por adelantado (buena práctica)
+// 4. Función de Verificación del Código (Implementación del Paso 4)
+function verifyCodeSubmit() {
+  const codeInput = document.getElementById("verification-code-input");
+  const code = codeInput.value.trim();
+
+  if (!confirmationResult || !code) {
+    alert("Falta el código de confirmación o el resultado de la confirmación.");
+    return;
+  }
+
+  // Llamada a confirm para validar el código
+  confirmationResult
+    .confirm(code)
+    .then((result) => {
+      // Usuario conectado exitosamente.
+      const user = result.user;
+      console.log("¡Usuario conectado! UID:", user.uid);
+      alert(`¡Acceso exitoso! Bienvenido ${user.phoneNumber}`);
+
+      // Opcional: Redirigir o limpiar formularios
+      document.getElementById(
+        "verification-form"
+      ).innerHTML = `<h2>¡Bienvenido, ${user.phoneNumber}!</h2>`;
+    })
+    .catch((error) => {
+      // Código incorrecto, expirado, etc.
+      console.error("Error al verificar código:", error);
+      alert(
+        "Código de verificación incorrecto. El código de prueba es 123456."
+      );
+    });
+}
+
+// 5. Agregar Event Listeners a los botones
 window.onload = function () {
+  // Inicializa el reCAPTCHA invisible
   recaptchaVerifier.render().then((widgetId) => {
     console.log("reCAPTCHA invisible renderizado y listo.");
-    // Opcional: Puedes guardar el ID del widget si lo necesitas.
-    // window.recaptchaWidgetId = widgetId;
   });
-};
 
-// 5. Agregar el evento click al botón del HTML
-// Para que se dispare la función onSignInSubmit al hacer clic en el botón.
-document.getElementById("sign-in-button").addEventListener("click", () => {
-  // Cuando el usuario hace clic, Firebase evalúa el reCAPTCHA invisible.
-  // Si lo pasa, llama automáticamente a la función 'callback' (onSignInSubmit).
-  console.log("Botón presionado. Esperando resolución de reCAPTCHA...");
-});
+  // Evento para enviar el código (dispara reCAPTCHA)
+  document.getElementById("sign-in-button").addEventListener("click", () => {
+    console.log("Botón presionado. Esperando resolución de reCAPTCHA...");
+  });
+
+  // Evento para verificar el código
+  document
+    .getElementById("verify-code-button")
+    .addEventListener("click", verifyCodeSubmit);
+};
