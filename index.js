@@ -49,7 +49,7 @@ function onSignInSubmit() {
 
   // NOTA: Debes pedirle al usuario el número de teléfono antes de llamar a esta función.
   // Usaremos un número de prueba por ahora.
-  const phoneNumber = "+573001234567"; // **REEMPLAZA** con un número de prueba autorizado
+  const phoneNumber = "+573014856811	"; // **REEMPLAZA** con un número de prueba autorizado
   const appVerifier = window.recaptchaVerifier;
 
   // Aquí iría el código para enviar el SMS:
