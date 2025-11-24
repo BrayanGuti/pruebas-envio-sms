@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
 import {
   getAuth,
-  onAuthStateChanged,
+  RecaptchaVerifier,
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
 // Your web app's Firebase configuration
@@ -21,19 +21,26 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// health cheks
 console.log(app);
 console.log(auth);
 console.log("Firebase initialized.");
 
-// Detect auth state
+// Configuracion del captcha
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in
-    const uid = user.uid;
-    console.log("User is signed in with UID:", uid);
-  } else {
-    // User is signed out
-    console.log("No user is signed in.");
-  }
+// 1. configuracion del idioma del captcha
+
+// opcion a
+// auth.languageCode = "es"; // <-- esto lo pone en español siempre
+
+// opcion b
+// usar el idioma del dispositivo
+auth.useDeviceLanguage();
+
+window.recaptchaVerifier = new RecaptchaVerifier(auth, "sign-in-button", {
+  size: "invisible",
+  callback: (response) => {
+    // reCAPTCHA solved, allow signInWithPhoneNumber.
+    onSignInSubmit();
+  },
 });
