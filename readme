@@ -1,0 +1,74 @@
+# 🚀 Configuración de Firebase en Proyecto Web
+
+# 🚀 Configuración de Firebase para proyecto web
+
+Este documento muestra cómo instalar e inicializar Firebase en una aplicación web usando los SDK oficiales.
+
+**Requisitos:**
+
+- Node.js y npm instalados.
+- Una cuenta y proyecto en Firebase (console.firebase.google.com).
+
+---
+
+## 📦 Instalación
+
+Instala la dependencia oficial de Firebase en tu proyecto:
+
+```bash
+npm install firebase
+```
+
+---
+
+## ⚙️ Inicializar Firebase
+
+Crea un archivo llamado `firebase.config.js` (o `firebase.js`) en tu proyecto y pega el siguiente ejemplo. Sustituye los valores del objeto `firebaseConfig` por los de tu proyecto (los encuentras en la consola de Firebase > Configuración del proyecto).
+
+```javascript
+// firebase.config.js
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+// Añade aquí los SDKs de Firebase que necesites (auth, firestore, etc.)
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+const firebaseConfig = {
+  apiKey: "REEMPLAZAR_POR_TU_API_KEY",
+  authDomain: "REEMPLAZAR.firebaseapp.com",
+  projectId: "REEMPLAZAR",
+  storageBucket: "REEMPLAZAR.appspot.com",
+  messagingSenderId: "REEMPLAZAR",
+  appId: "REEMPLAZAR",
+  measurementId: "REEMPLAZAR",
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+export { app, analytics };
+```
+
+---
+
+> **Advertencia:** Nunca subas credenciales o configuración sensible (como `apiKey`) a repositorios públicos. Usa variables de entorno, secretos en tu entorno de despliegue o un archivo `.env` que incluyas en `.gitignore`.
+
+---
+
+## ✅ Buenas prácticas y notas
+
+- Reemplaza los valores de ejemplo por los de tu proyecto antes de desplegar.
+- Para usar servicios adicionales (Auth, Firestore, Realtime Database, Storage, Messaging) importa sus módulos específicos y configúralos según la documentación oficial.
+- Para pruebas locales, puedes configurar emuladores de Firebase: https://firebase.google.com/docs/emulator-suite
+
+---
+
+## 🔗 Recursos
+
+- Documentación de Firebase (Web): https://firebase.google.com/docs/web
+- Guía de configuración rápida: https://firebase.google.com/docs/web/setup
+
+Si quieres, puedo:
+
+- Añadir instrucciones para autentificación por teléfono (OTP) y ejemplos adaptados a tu proyecto.
+- Crear un `.env.example` y actualizar `package.json` con scripts útiles.
