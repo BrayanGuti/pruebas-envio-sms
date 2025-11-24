@@ -82,7 +82,7 @@ function verifyCodeSubmit() {
     .catch((error) => {
       console.error("Error al verificar código:", error);
       alert(
-        "Código de verificación incorrecto. El código de prueba es 123456."
+        "Código de verificación incorrecto. El código de prueba es 777777."
       );
     });
 }
