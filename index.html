@@ -3,19 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gettin started with Firebase Auth</title>
+    <title>Firebase Phone Auth - Final Code</title>
     <script type="module" src="./index.js"></script>
   </head>
   <body>
     <h1>Iniciar Sesión con Teléfono</h1>
 
     <div id="phone-form">
+      <p>Número de prueba: +57 301 4856811</p>
       <input type="tel" id="phone-number-input" value="+573014856811" />
       <button id="sign-in-button">Enviar Código</button>
     </div>
 
     <div id="verification-form" style="display: none">
-      <p>Código enviado. Ingrésalo a continuación (el código es 123456).</p>
+      <p>
+        Código enviado. Ingrésalo a continuación (código de prueba: 777777).
+      </p>
       <input
         type="text"
         id="verification-code-input"
