@@ -7,7 +7,23 @@
     <script type="module" src="./index.js"></script>
   </head>
   <body>
-    <h1>The html file is loading</h1>
-    <button id="sign-in-button">envíar tu formulario de acceso</button>
+    <h1>Iniciar Sesión con Teléfono</h1>
+
+    <div id="phone-form">
+      <input type="tel" id="phone-number-input" value="+573014856811" />
+      <button id="sign-in-button">Enviar Código</button>
+    </div>
+
+    <div id="verification-form" style="display: none">
+      <p>Código enviado. Ingrésalo a continuación (el código es 123456).</p>
+      <input
+        type="text"
+        id="verification-code-input"
+        placeholder="Código de 6 dígitos"
+      />
+      <button id="verify-code-button">Verificar y Acceder</button>
+    </div>
+
+    <div id="recaptcha-container"></div>
   </body>
 </html>
