@@ -35,12 +35,6 @@ function onSignInSubmit() {
   const phoneNumberInput = document.getElementById("phone-number-input");
   const phoneNumber = phoneNumberInput.value.trim();
 
-  // Validación del número de prueba
-  if (phoneNumber !== "+573014856811") {
-    alert("Por favor usa el número de prueba: +573014856811");
-    return;
-  }
-
   const appVerifier = recaptchaVerifier;
 
   // Código para enviar el SMS
