@@ -72,6 +72,8 @@ function verifyCodeSubmit() {
     .then((result) => {
       const user = result.user;
       console.log("¡Usuario conectado! UID:", user.uid);
+      console.log("Número de teléfono:", user);
+      console.log("resultado completo:", result);
       alert(`¡Acceso exitoso! Bienvenido ${user.phoneNumber}`);
 
       // Cambiar la UI a mensaje de éxito
